@@ -44,63 +44,69 @@ fun PostsScreen(viewModel: PostsViewModel = hiltViewModel()) {
 fun PostsContent(uiState: PostsUiState, onSync: () -> Unit) {
     Column {
         TopAppBar(
-            title = { Text("Posts") },
-            colors = TopAppBarDefaults.topAppBarColors(
+            title = { Text("Posts") }, colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 titleContentColor = MaterialTheme.colorScheme.onPrimary
             )
         )
-        when {
-            uiState.isLoading -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Button(onClick = onSync, enabled = !uiState.isLoading) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    CircularProgressIndicator()
+                    Icon(painter = painterResource(R.drawable.stat_notify_sync), null)
+                    Text("Sync")
                 }
             }
-            uiState.error != null -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(uiState.error, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = MaterialTheme.colorScheme.error)
+            when {
+                uiState.isLoading -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
+
+                uiState.error != null -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            uiState.error,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+
+                uiState.data != null -> PostContentSuccess(uiState.data, onSync)
             }
-            uiState.data != null -> PostContentSuccess(uiState.data, onSync)
         }
     }
 }
 
 @Composable
 fun PostContentSuccess(
-    posts: List<PostUiModel>,
-    onSync: () -> Unit
+    posts: List<PostUiModel>, onSync: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Button(onClick = onSync) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Icon(painter = painterResource(R.drawable.stat_notify_sync), null)
-                Text("Sync")
-            }
+        items(items = posts) { post ->
+            PostCard(post)
         }
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(items = posts) { post ->
-                PostCard(post)
-            }
-        }
+
     }
 }
 
@@ -108,8 +114,7 @@ fun PostContentSuccess(
 fun PostCard(post: PostUiModel) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
                 post.title.replaceFirstChar { it.uppercase() },
@@ -147,6 +152,19 @@ val dummyProducts = listOf(
 
 @Preview(showBackground = true)
 @Composable
-fun PostsScreenPreview() {
+fun PostsScreenPreviewSccess() {
     PostsContent(uiState = PostsUiState(data = dummyProducts), onSync = {})
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PostsScreenError() {
+    PostsContent(uiState = PostsUiState(isLoading = false, data = null, error = "Error while fetching data"), onSync = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PostsScreenLoading() {
+    PostsContent(uiState = PostsUiState(isLoading = true, data = null, error = null), onSync = {})
 }
