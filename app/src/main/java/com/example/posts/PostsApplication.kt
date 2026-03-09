@@ -11,6 +11,7 @@ import androidx.work.WorkManager
 import com.example.posts.worker.SyncWorker
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * Application class responsible for initializing Hilt and configuring
@@ -29,6 +30,7 @@ class PostsApplication : Application(), Configuration.Provider {
      * injected dependencies (like PostRepository), it must use HiltWorkerFactory
      * to construct the worker correctly.
      */
+    @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
     override val workManagerConfiguration: Configuration

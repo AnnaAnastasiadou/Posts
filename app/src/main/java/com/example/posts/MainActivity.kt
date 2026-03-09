@@ -11,8 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.posts.feature.PostsScreen
 import com.example.posts.ui.theme.PostsTheme
+import com.example.posts.worker.SyncWorker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

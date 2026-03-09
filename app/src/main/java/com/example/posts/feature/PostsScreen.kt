@@ -152,7 +152,7 @@ val dummyProducts = listOf(
 
 @Preview(showBackground = true)
 @Composable
-fun PostsScreenPreviewSccess() {
+fun PostsScreenPreviewSuccess() {
     PostsContent(uiState = PostsUiState(data = dummyProducts), onSync = {})
 }
 
