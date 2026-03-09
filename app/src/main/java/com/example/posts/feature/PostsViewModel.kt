@@ -25,7 +25,7 @@ class PostsViewModel @Inject constructor(
 
     private fun checkInitialSync() {
         viewModelScope.launch {
-            if (postsRepository.observeItems().first().isEmpty()) {
+            if (postsRepository.isEmpty()) {
                 refreshPosts()
             }
         }
@@ -54,7 +54,13 @@ class PostsViewModel @Inject constructor(
             try {
                 postsRepository.syncPosts()
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, data = null, error = "Error while fetching data") }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        data = null,
+                        error = "Error while fetching data"
+                    )
+                }
             }
         }
     }

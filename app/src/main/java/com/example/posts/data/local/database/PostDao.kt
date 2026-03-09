@@ -17,4 +17,7 @@ interface PostDao {
 
     @Query("SELECT * FROM posts")
     fun getAll(): Flow<List<Post>>
+
+    @Query("SELECT EXISTS(SELECT * FROM POSTS LIMIT 1) ")
+    suspend fun hasPosts(): Boolean
 }

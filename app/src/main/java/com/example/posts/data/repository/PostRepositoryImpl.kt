@@ -10,8 +10,7 @@ import javax.inject.Inject
 class PostRepositoryImpl @Inject constructor(
     private val postApi: PostApi,
     private val postDao: PostDao
-) :
-    PostRepository {
+) : PostRepository {
     override suspend fun syncPosts() {
         val posts = postApi.fetchItems().map { dto -> dto.toEntity() }
         postDao.insertAll(posts)
@@ -19,5 +18,9 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun observeItems(): Flow<List<Post>> {
         return postDao.getAll()
+    }
+
+    override suspend fun isEmpty(): Boolean {
+        return !postDao.hasPosts()
     }
 }
